@@ -1,0 +1,13 @@
+{% extends 'healthapp/base.html' %}
+{% block content %}
+    {% for each in symptoms %}
+    <h4>{{each}}</h4>
+    {% endfor %}
+    <div class="rel-form">
+    <form action="{% url 'related' %}" method="get">
+        {{form.as_p}}
+        <input type="submit" name="next" value="Next">
+        <input type="submit" name="check" value="Submit and Check">
+    </form>
+    </div>
+{% endblock %}
