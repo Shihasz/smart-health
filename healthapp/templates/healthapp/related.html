@@ -1,13 +1,16 @@
 {% extends 'healthapp/base.html' %}
 {% block content %}
+    <h5>User's Symptoms: </h5>
+    <br>
     {% for each in symptoms %}
-    <h4>{{each}}</h4>
+    <span class="border border-primary rounded bg-light p-2">{{each}}</span>
     {% endfor %}
+    <br><br>
     <div class="rel-form">
     <form action="{% url 'related' %}" method="get">
-        {{form.as_p}}
-        <input type="submit" name="next" value="Next">
-        <input type="submit" name="check" value="Submit and Check">
+        {{form.as_table}}
+        <input class="btn btn-primary" type="submit" name="next" value="Next">
+        <input class="btn btn-success" type="submit" name="check" value="Submit and Check">
     </form>
     </div>
 {% endblock %}

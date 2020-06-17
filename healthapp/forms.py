@@ -112,7 +112,7 @@ class MainSymptomForm(forms.Form):
                      ('blister', 'Blister'),
                      ('red_sore_around_nose', 'Red Sore Around Nose'),
                      ('yellow_crust_ooze', 'Yellow Crust Ooze')]
-    symptom = forms.ChoiceField(choices=COMMON_SYMPTOMS)
+    symptom = forms.ChoiceField(choices=COMMON_SYMPTOMS, label="Select your main symptom: ")
 
 
 class RelatedSymptomForm(forms.Form):
@@ -126,4 +126,7 @@ class RelatedSymptomForm(forms.Form):
             for each in rel_list:
                 RELATED.append((each, " ".join(each.split('_')).title()))
 
-        self.fields['symptoms'] = forms.MultipleChoiceField(choices=RELATED, widget=forms.CheckboxSelectMultiple())
+        self.fields['symptoms'] = forms.MultipleChoiceField(choices=RELATED,
+                                                            widget=forms.CheckboxSelectMultiple(),
+                                                            required=False,
+                                                            label="Do you have any of these related symptoms")

@@ -1,7 +1,9 @@
 {% extends 'healthapp/base.html' %}
 {% block content %}
-<h1>{{out}}</h1>
+<div>
+<h2>Probable Disease : {{out}}</h2>
     <form action="{% url 'another' %}">
-        <input type="submit">
+        <input class="btn btn-primary" type="submit" value="Check Another">
     </form>
+</div>
 {% endblock %}

@@ -92,9 +92,9 @@ def process_symptoms(request):
 
 
 def predict_another(request):
-    del request.session['symptoms']
-    del request.session['displayed']
-    del request.session['related']
+    request.session.pop('symptoms', None)
+    request.session.pop('displayed', None)
+    request.session.pop('related', 'None')
     return redirect('main')
 
 

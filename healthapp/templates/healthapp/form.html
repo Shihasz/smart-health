@@ -1,7 +1,7 @@
 {% extends 'healthapp/base.html' %}
 {% block content %}
     <form action="{% url 'main' %}" method="get">
-        {{ form.as_p }}
-        <input type="submit" name="next" value="Next">
+        {{ form.as_table }}
+        <input class="btn btn-primary" type="submit" name="next" value="Next">
     </form>
 {% endblock %}
