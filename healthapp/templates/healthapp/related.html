@@ -2,9 +2,11 @@
 {% block content %}
     <h5>User's Symptoms: </h5>
     <br>
+    <div>
     {% for each in symptoms %}
-    <span class="border border-primary rounded bg-light p-2">{{each}}</span>
+    <span class="border border-primary rounded bg-light p-2 d-inline-block">{{each}}</span>
     {% endfor %}
+    </div>
     <br><br>
     <div class="rel-form">
     <form action="{% url 'related' %}" method="get">
