@@ -16,33 +16,40 @@ def index(request):
     )
 
 
+'''
+Get the main symptom from common symptoms and return related symptoms
+'''
+
+
 def main_symptom(request):
     module_dir = os.path.dirname(__file__)  # get current directory
     filename = 'related.csv'
     rel_file = os.path.join(module_dir, filename)
+    # load the related.csv file to a dataframe
     df = pd.read_csv(rel_file)
+    # load the session variable to store users symptosms
     symptoms = request.session.get('symptoms', list())
     if request.method == 'GET':
         form = MainSymptomForm(request.GET)
         if form.is_valid():
-            symptom = form.cleaned_data['symptom']
-            symptoms.append(symptom)
-            displayed = request.session.get('displayed', list())
-            displayed.append(symptom)
+            symptom = form.cleaned_data['symptom'] # get the main symptom from form
+            symptoms.append(symptom) # Apppend the main symptom to users symptoms
+            displayed = request.session.get('displayed', list()) # load the session variable to store already displayed symptoms
+            displayed.append(symptom) # Append displayed symptom
             request.session['symptoms'] = symptoms
-            rel_list = df[df['symptom'] == symptom]['related'].to_list()
+            rel_list = df[df['symptom'] == symptom]['related'].to_list() # store related symptoms to a list
             displayed.extend(rel_list)
             request.session['displayed'] = displayed
-            request.session['related'] = rel_list
+            request.session['related'] = rel_list # store the related list to a session variable
             return redirect('related')
     else:
-        request.session['symptoms'] = list()
+        request.session['symptoms'] = list() # initialise session variables
         request.session['related'] = list()
         form = MainSymptomForm()
     return render(request,
                   'healthapp/form.html',
                   {'form': form}
-    )
+                  )
 
 
 def process_symptoms(request):
@@ -56,11 +63,12 @@ def process_symptoms(request):
         form = RelatedSymptomForm(request.GET, request=request)
 
         if form.is_valid():
-            if 'next' in request.GET:
+            if 'next' in request.GET: # If user clicks "next"
                 symptom_list = form.cleaned_data['symptoms']
                 symptoms.extend(symptom_list)
                 displayed = request.session.get('displayed', list())
                 rel_set = set()
+                # find related symptoms of each symptom in users symptoms
                 for each in symptom_list:
                     lst = df[df['symptom'] == each]['related'].to_list()
                     for item in lst:
@@ -73,11 +81,11 @@ def process_symptoms(request):
                 request.session['symptoms'] = symptoms
                 if rel_list:
                     return redirect('related')
-                return redirect('result')
-            elif 'check' in request.GET:
+                return redirect('result') # if there is no related symptoms redirect to result for prediction
+            elif 'check' in request.GET: # if user clicks "submit and check"
                 symptom = form.cleaned_data['symptoms']
                 symptoms.extend(symptom)
-                request.session['symptoms'] = symptoms
+                request.session['symptoms'] = symptoms # get all users symptoms
                 return redirect('result')
 
 
@@ -91,7 +99,7 @@ def process_symptoms(request):
     )
 
 
-def predict_another(request):
+def predict_another(request): # clear session variables for new prediction
     request.session.pop('symptoms', None)
     request.session.pop('displayed', None)
     request.session.pop('related', 'None')
@@ -99,6 +107,7 @@ def predict_another(request):
 
 
 def result_view(request):
+    # Initialise symptom dictionary
     symptoms_dict = {'itching': 0,
                      'skin_rash': 1,
                      'nodal_skin_eruptions': 2,
@@ -230,18 +239,19 @@ def result_view(request):
                      'blister': 128,
                      'red_sore_around_nose': 129,
                      'yellow_crust_ooze': 130}
-
+    # Initialize input vector
     input_vector = np.zeros(len(symptoms_dict))
     symptoms = request.session.get('symptoms')
+    # Add users symptoms to input vector
     for symptom in symptoms:
         input_vector[symptoms_dict[symptom]] = 1
-
+    # load saved model using pickle
     module_dir = os.path.dirname(__file__)  # get current directory
     filename = 'finalized_model.sav'
     model_file_path = os.path.join(module_dir, filename)
     model_file = open(model_file_path, 'rb')
     loaded_model = pickle.load(model_file)
-    loaded_model.predict_proba([input_vector])
+    # predict the output and store in the output
     out = loaded_model.predict([input_vector])
 
     return render(request, 'healthapp/result.html', {'out': out[0]})
