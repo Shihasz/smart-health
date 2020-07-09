@@ -1,0 +1,23 @@
+{% extends 'healthapp/base.html' %}
+
+{% block content %}
+<div class="col-md-6 mx-auto bg-light shadow p-4 mt-5">
+    <h2>Register as a {{ user_type }}</h2>
+    <form method="post"> {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <!--<label>{{ field.label }}</label>-->
+                <div class="input-group">
+                    {{ field }}
+                </div>
+                {% if field.errors %}
+                    <div class="text-danger">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+</div>
+{% endblock %}
