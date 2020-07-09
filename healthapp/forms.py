@@ -1,4 +1,8 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.db import transaction
+
+from healthapp.models import User, Patient, Doctor, Department, Appointment
 
 
 class MainSymptomForm(forms.Form):
@@ -130,3 +134,115 @@ class RelatedSymptomForm(forms.Form):
                                                             widget=forms.CheckboxSelectMultiple(),
                                                             required=False,
                                                             label="Do you have any of these related symptoms")
+
+
+DISTRICTS = [
+    ('', 'Place'),
+    ('AL', 'Alappuzha'),
+    ('ER', 'Ernakulam'),
+    ('ID', 'Idukki'),
+    ('KN', 'Kannur'),
+    ('KS', 'Kasargod'),
+    ('KL', 'Kollam'),
+    ('KT', 'Kottayam'),
+    ('MA', 'Malappuram'),
+    ('PL', 'Palakkad'),
+    ('PT', 'Pathanamthitta'),
+    ('TV', 'Thiruvnanthapuram'),
+    ('TS', 'Thrissur'),
+    ('WA', 'Wayanad')
+]
+
+
+class PatientSignUpForm(UserCreationForm):
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control',
+                                                                                    'placeholder': 'Password'}))
+    password2 = forms.CharField(label='Password Confirmation', widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'placeholder': 'Confirm Password'}))
+    age = forms.IntegerField(min_value=0,
+                             widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Age'}))
+    GENDER_CHOICES = [
+        ('', 'Gender'),
+        ('M', 'Male'),
+        ('F', 'Female')
+    ]
+    gender = forms.ChoiceField(choices=GENDER_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    BLOOD_GROUP_CHOICES = [
+        ('A+', 'A+ve'),
+        ('A-', 'A-ve'),
+        ('B+', 'B+ve'),
+        ('B-', 'B-ve'),
+        ('O+', 'O+ve'),
+        ('O-', 'O-ve'),
+        ('AB+', 'AB+ve'),
+        ('AB-', 'AB-ve')
+    ]
+    blood_group = forms.ChoiceField(choices=BLOOD_GROUP_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    place = forms.ChoiceField(choices=DISTRICTS, widget=forms.Select(attrs={'class': 'form-control'}))
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ('first_name', 'last_name', 'username', 'password1', 'password2', 'age', 'gender', 'blood_group', 'place',)
+
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.is_patient = True
+        user.save()
+        patient = Patient(user=user)
+        patient.age = self.cleaned_data.get('age')
+        patient.gender = self.cleaned_data.get('gender')
+        patient.blood_group = self.cleaned_data.get('blood_group')
+        patient.place = self.cleaned_data.get('place')
+        patient.save()
+        return user
+
+
+class DoctorSignUpForm(UserCreationForm):
+    first_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}))
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control',
+                                                                                    'placeholder': 'Password'}))
+    password2 = forms.CharField(label='Password Confirmation', widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'placeholder': 'Confirm Password'}))
+    deptlist = Department.objects.all()
+    department = forms.ModelChoiceField(queryset=deptlist, empty_label='Department',
+                                        widget=forms.Select(attrs={'class': 'form-control'}))
+    place = forms.ChoiceField(choices=DISTRICTS, widget=forms.Select(attrs={'class': 'form-control'}))
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ('first_name', 'last_name', 'username', 'password1', 'password2', 'department', 'place',)
+
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.is_doctor = True
+        user.save()
+        doctor = Doctor(user=user)
+        doctor.department = self.cleaned_data.get('department')
+        doctor.place = self.cleaned_data.get('place')
+        doctor.save()
+        return user
+
+
+class AppointmentForm(forms.ModelForm):
+    doctors = Doctor.objects.all()
+    doctor = forms.ModelChoiceField(queryset=doctors, empty_label='Select a doctor',
+                                    widget=forms.Select(attrs={'class': 'form-control'}))
+    date = forms.DateField(widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': True}))
+
+    class Meta:
+        model = Appointment
+        fields = ('doctor', 'date',)
+
+    @transaction.atomic
+    def save(self):
+        appointment = Appointment()
+        appointment.doctor = self.cleaned_data.get('doctor')
+        appointment.date = self.cleaned_data.get('date')
+        return appointment

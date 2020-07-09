@@ -1,0 +1,30 @@
+{% extends 'healthapp/doctors/dashboard.html' %}
+
+{% block content %}
+<table class="table table-bordered w-75 mx-auto">
+    <thead class="thead-light">
+        <tr class="text-center">
+            <th>Appointment ID</th>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for app in appointments %}
+        <tr class="text-center">
+            <td>{{ app.id }}</td>
+            <td>{{ app.patient.user.first_name }}</td>
+            <td>{{ app.date }}</td>
+            {% if app.status %}
+                <td class="text-success font-weight-bold">Completed</td>
+            {% else %}
+                <td class="text-danger font-weight-bold">Not completed<br>
+                <a class="btn btn-success" href="{% url 'doctors:status_update' app.pk %}">Mark as completed</a>
+                </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
