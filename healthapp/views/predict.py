@@ -4,9 +4,10 @@ import pickle
 import pandas as pd
 import numpy as np
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from healthapp.forms import MainSymptomForm, RelatedSymptomForm
+from healthapp.models import Disease, Doctor
 
 
 def index(request):
@@ -253,5 +254,11 @@ def result_view(request):
     loaded_model = pickle.load(model_file)
     # predict the output and store in the output
     out = loaded_model.predict([input_vector])
+    disease = out[0]
+    disease_obj = get_object_or_404(Disease, name=disease)
+    departments = disease_obj.department.all()
+    doctors = []
+    for dep in departments:
+        doctors.append(Doctor.objects.filter(department = dep))
 
-    return render(request, 'healthapp/result.html', {'out': out[0]})
+    return render(request, 'healthapp/result.html', {'out': disease, 'doctors':doctors})

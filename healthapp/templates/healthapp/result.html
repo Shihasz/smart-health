@@ -6,4 +6,12 @@
         <input class="btn btn-primary" type="submit" value="Check Another">
     </form>
 </div>
+<h3>Doctors specialised in treatment of {{out}}</h3>
+<p>
+    <ul>
+        {% for each in doctors %}
+        <li>{{each.first_name}}</li>
+        {% endfor %}
+    </ul>
+</p>
 {% endblock %}

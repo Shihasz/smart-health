@@ -71,3 +71,13 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='doctor_id')
     date = models.DateField()
     status = models.BooleanField(default=False)
+
+
+class Disease(models.Model):
+    name = models.CharField(max_length=50)
+    department = models.ManyToManyField(Department, null=True)
+    treatments = models.CharField(max_length=1024, null=True)
+    remedies = models.CharField(max_length=1024, null=True)
+
+    def __str__(self):
+        return self.name
