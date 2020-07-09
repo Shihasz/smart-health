@@ -12,7 +12,7 @@ from ..models import User, Appointment, Patient
 class PatientSignUpView(CreateView):
     model = User
     form_class = PatientSignUpForm
-    template_name = 'authentication/signup_form.html'
+    template_name = 'registration/signup_form.html'
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'patient'
