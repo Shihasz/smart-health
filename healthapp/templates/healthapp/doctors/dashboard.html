@@ -1,10 +1,13 @@
 {% extends 'healthapp/base.html' %}
 {% block navigation %}
-<nav class="navbar navbar-expand-sm">
+<nav class="navbar navbar-expand-sm bg-light shadow">
 
     <ul class="navbar-nav">
         <li class="nav-item">
-            <a class="nav-link" href="#">Dashboard</a>
+            <a class="nav-link" href="{% url 'doctors:dashboard' %}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'doctors:app_list' %}">Appointment List</a>
         </li>
     </ul>
     <ul class="nav navbar-nav ml-auto">
@@ -18,7 +21,6 @@
 
 {% block content %}
 
-<h1>Success Doctor</h1>
-<a href="{% url 'doctors:app_list' %}">Appointment List</a>
+<h1>Welcome, {{ name.title }}!</h1>
 
 {% endblock %}

@@ -10,8 +10,22 @@
 <p>
     <ul>
         {% for each in doctors %}
-        <li>{{each.first_name}}</li>
+        <li>{{each.user.first_name}} {{each.user.last_name}}</li>
         {% endfor %}
     </ul>
+    <br>
+    <a class="btn btn-success" href="{% url 'patients:app_form' %}">Book appointment</a>
 </p>
+<h3>Treatments</h3>
+<ul>
+    {% for treat in treatments %}
+    <li>{{treat}}</li>
+    {% endfor %}
+</ul>
+<h3>Home remedies</h3>
+<ul>
+    {% for remedy in remedies %}
+    <li>{{remedy}}</li>
+    {% endfor %}
+</ul>
 {% endblock %}

@@ -257,8 +257,13 @@ def result_view(request):
     disease = out[0]
     disease_obj = get_object_or_404(Disease, name=disease)
     departments = disease_obj.department.all()
+    treatments = disease_obj.treatments.split('&&')
+    remedies = disease_obj.remedies.split('&&')
     doctors = []
     for dep in departments:
-        doctors.append(Doctor.objects.filter(department = dep))
+        doctors.extend(list(Doctor.objects.filter(department = dep)))
 
-    return render(request, 'healthapp/result.html', {'out': disease, 'doctors':doctors})
+    return render(request,
+                  'healthapp/result.html',
+                  {'out': disease, 'doctors':doctors, 'treatments': treatments, 'remedies': remedies}
+                 )
