@@ -143,6 +143,7 @@ DISTRICTS = [
     ('ID', 'Idukki'),
     ('KN', 'Kannur'),
     ('KS', 'Kasargod'),
+    ('KZ', 'Kozhikode'),
     ('KL', 'Kollam'),
     ('KT', 'Kottayam'),
     ('MA', 'Malappuram'),

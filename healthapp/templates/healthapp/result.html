@@ -1,21 +1,37 @@
 {% extends 'healthapp/base.html' %}
 {% block content %}
-<div>
+<div class="m-5">
 <h2>Probable Disease : {{out}}</h2>
     <form action="{% url 'another' %}">
         <input class="btn btn-primary" type="submit" value="Check Another">
     </form>
 </div>
 <h3>Doctors specialised in treatment of {{out}}</h3>
-<p>
-    <ul>
+<hr>
+<br>
+<table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th>Name</th>
+            <th>Specialization</th>
+            <th>Place</th>
+        </tr>
+    </thead>
+    <tdata>
         {% for each in doctors %}
-        <li>{{each.user.first_name}} {{each.user.last_name}}</li>
+        <tr>
+            <td>{{each.user.first_name}} {{each.user.last_name}}</td>
+            <td>{{each.department}}</td>
+            <td>{{each.get_place_display}}</td>
+        </tr>
         {% endfor %}
-    </ul>
-    <br>
-    <a class="btn btn-success" href="{% url 'patients:app_form' %}">Book appointment</a>
-</p>
+    </tdata>
+</table>
+<div class="text-center m-3">
+    <a class="btn btn-success " href="{% url 'patients:app_form' %}">Book appointment</a>
+</div>
+<hr>
+<div class="mt-5">
 <h3>Treatments</h3>
 <ul>
     {% for treat in treatments %}
@@ -28,4 +44,5 @@
     <li>{{remedy}}</li>
     {% endfor %}
 </ul>
+</div>
 {% endblock %}

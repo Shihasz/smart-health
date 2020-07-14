@@ -14,7 +14,7 @@
         {% for app in appointments %}
         <tr class="text-center">
             <td>{{ app.id }}</td>
-            <td>{{ app.patient.user.first_name }}</td>
+            <td>{{ app.patient.user.first_name }} {{ app.patient.user.last_name }}</td>
             <td>{{ app.date }}</td>
             {% if app.status %}
                 <td class="text-success font-weight-bold">Completed</td>

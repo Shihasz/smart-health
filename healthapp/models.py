@@ -76,8 +76,8 @@ class Appointment(models.Model):
 class Disease(models.Model):
     name = models.CharField(max_length=50)
     department = models.ManyToManyField(Department, null=True)
-    treatments = models.CharField(max_length=1024, null=True)
-    remedies = models.CharField(max_length=1024, null=True)
+    treatments = models.CharField(max_length=5000, null=True)
+    remedies = models.CharField(max_length=5000, null=True)
 
     def __str__(self):
         return self.name
