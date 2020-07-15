@@ -6,7 +6,7 @@
         <input class="btn btn-primary" type="submit" value="Check Another">
     </form>
 </div>
-<h3>Doctors specialised in treatment of {{out}}</h3>
+<h3>Doctors specialized in treatment of {{out}}</h3>
 <hr>
 <br>
 <table class="table">
@@ -20,7 +20,7 @@
     <tdata>
         {% for each in doctors %}
         <tr>
-            <td>{{each.user.first_name}} {{each.user.last_name}}</td>
+            <td>Dr. {{each.user.first_name}} {{each.user.last_name}}</td>
             <td>{{each.department}}</td>
             <td>{{each.get_place_display}}</td>
         </tr>

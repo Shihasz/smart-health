@@ -11,6 +11,11 @@ from healthapp.models import Disease, Doctor
 
 
 def index(request):
+    if request.user.is_authenticated:
+        if request.user.is_doctor:
+            return redirect('doctors:dashboard')
+        else:
+            return redirect('patients:dashboard')
     return render(
         request,
         'healthapp/index.html'
