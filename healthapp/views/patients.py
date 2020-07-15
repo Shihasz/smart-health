@@ -40,9 +40,17 @@ class AppointmentView(CreateView):
     form_class = AppointmentForm
     template_name = 'healthapp/patients/app_form.html'
 
+    def get_form_kwargs(self):
+        kwargs = super(AppointmentView, self).get_form_kwargs()
+        kwargs.update({'disease': self.request.session.get('disease', None)})
+        return kwargs
+
     def form_valid(self, form):
         appointment = form.save()
         appointment.patient = Patient.objects.get(user=self.request.user)
         appointment.save()
+        del self.request.session['symptoms']
+        del self.request.session['related']
+        del self.request.session['displayed']
         return redirect('patients:dashboard')
 

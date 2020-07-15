@@ -260,14 +260,13 @@ def result_view(request):
     # predict the output and store in the output
     out = loaded_model.predict([input_vector])
     disease = out[0]
+    request.session['disease'] = disease
     try:
         disease_obj = get_object_or_404(Disease, name=disease)
         departments = disease_obj.department.all()
         treatments = disease_obj.treatments.split('&&')
         remedies = disease_obj.remedies.split('&&')
-        doctors = []
-        for dep in departments:
-            doctors.extend(list(Doctor.objects.filter(department = dep)))
+        doctors = list(Doctor.objects.filter(department__in = departments))
     except:
         doctors=[]
         treatments=""

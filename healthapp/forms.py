@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 
-from healthapp.models import User, Patient, Doctor, Department, Appointment
+from healthapp.models import User, Patient, Doctor, Department, Appointment, Disease
 
 
 class MainSymptomForm(forms.Form):
@@ -232,8 +233,18 @@ class DoctorSignUpForm(UserCreationForm):
 
 
 class AppointmentForm(forms.ModelForm):
-    doctors = Doctor.objects.all()
-    doctor = forms.ModelChoiceField(queryset=doctors, empty_label='Select a doctor',
+    def __init__(self, *args, **kwargs):
+        self.disease = kwargs.pop('disease', None)
+        super(AppointmentForm, self).__init__(*args, **kwargs)
+        doctor_choices =Doctor.objects.all()
+        if self.disease:
+            disease_obj = get_object_or_404(Disease, name=self.disease)
+            departments = disease_obj.department.all()
+            doctor_choices = Doctor.objects.filter(department__in = departments)
+        self.fields['doctor'].queryset = doctor_choices
+
+    doctor_choices = Doctor.objects.all()
+    doctor = forms.ModelChoiceField(queryset=doctor_choices, empty_label='Select a doctor',
                                     widget=forms.Select(attrs={'class': 'form-control'}))
     date = forms.DateField(widget=forms.TextInput(attrs={'class': 'form-control', 'readonly': True}))
 

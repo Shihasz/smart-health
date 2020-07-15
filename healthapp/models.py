@@ -63,7 +63,7 @@ class Doctor(models.Model):
     place = models.CharField(max_length=100, choices=DISTRICTS)
 
     def __str__(self):
-        return self.user.username
+        return 'Dr. ' + self.user.first_name + ' ' + self.user.last_name
 
 
 class Appointment(models.Model):
